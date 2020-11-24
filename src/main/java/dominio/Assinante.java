@@ -25,6 +25,10 @@ public class Assinante {
 
 	private LocalDateTime dataAssinaturaDoPlano;
 
+	public Assinante() {
+		
+	};
+	
 	public Assinante(String nome, String cpf, LocalDateTime dataNascimento, Endereco endereco, String telefoneCelular,
 			String telefoneFixo, Plano plano, LocalDateTime dataAssinaturaDoPlano) throws Exception {
 

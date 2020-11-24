@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class AssinaturaTest {
 
 		canais.add(canal1);
 		canais.add(canal2);
-		plano = new Plano("Full cinema HD", new BigDecimal(250.00), canais);
+		plano = new Plano("Full cinema HD", new BigDecimal(350.00), canais);
 	}
 
 	@Test
@@ -288,6 +289,94 @@ public class AssinaturaTest {
 		assinante.verificarSeEUmAssinanteVip();
 
 		assertTrue(assinante.verificarSeEUmAssinanteVip());
+	}
+
+	@Test
+	public void deve_obter_o_valor_do_plano_pelo_assinante() throws Exception {
+		BigDecimal valorDoPlano = new BigDecimal(350.00);
+		LocalDateTime dataAssinaturaDoPlano = LocalDateTime.now();
+		Assinante assinante = new Assinante(nome, cpf, dataNascimento, endereco, telefoneCelular, telefoneFixo, plano,
+				dataAssinaturaDoPlano);
+
+		assertEquals(valorDoPlano, assinante.getPlano().getValor());
+	}
+
+	@Test
+	public void deve_obter_o_valor_do_plano_quando_o_assinante_e_vip() throws Exception {
+		BigDecimal valorDoPlano = new BigDecimal(350.00);
+		Plano plano = new Plano("Premier Sport ", valorDoPlano, canais);
+		LocalDateTime dataDeAssinaturaDoPlano = LocalDateTime.of(2018, Month.MARCH, 15, 1, 10);
+		Assinante assinante = new Assinante(nome, cpf, dataNascimento, endereco, telefoneCelular, telefoneFixo, plano,
+				dataDeAssinaturaDoPlano);
+
+		assinante.verificarSeEUmAssinanteVip();
+
+		assertTrue(assinante.verificarSeEUmAssinanteVip());
+		assertEquals(valorDoPlano, plano.getValor());
+	}
+
+	@Test
+	public void nao_deve_aterar_o_plano_se_nao_existir_um__plano() throws Exception {
+		Assinante assinante = new Assinante(nome, cpf, dataNascimento, endereco, telefoneCelular, telefoneFixo, plano,
+				dataAssinaturaDoPlano);
+		Plano plano = null;
+		String mensagem = "O assinante precisa ter um plano de tv";
+
+		Exception excecao = assertThrows(Exception.class, () -> assinante.alterarPlano(plano));
+
+		assertEquals(mensagem, excecao.getMessage());
+
+	}
+
+	@Test
+	public void nao_deve_alterar_os_dados_do_assinante_sem_o_nome_() throws Exception {
+		String nome = null;
+		Assinante assinante = new Assinante();
+
+		String mensagem = "Nome do assinante é obrigatório";
+
+		Exception excecao = assertThrows(Exception.class,
+				() -> assinante.alterarDadosDoAssinante(nome, dataNascimento, endereco, telefoneCelular, telefoneFixo));
+
+		assertEquals(mensagem, excecao.getMessage());
+
+	}
+
+	@Test
+	public void nao_deve_alterar_os_dados_do_assinante_sem_a_data_nascimento() throws Exception {
+		LocalDateTime dataNascimento = null;
+		Assinante assinante = new Assinante();
+		String mensagem = "Data de nascimento do assinante é obrigatória";
+
+		Exception excecao = assertThrows(Exception.class,
+				() -> assinante.alterarDadosDoAssinante(nome, dataNascimento, endereco, telefoneCelular, telefoneFixo));
+
+		assertEquals(mensagem, excecao.getMessage());
+	}
+
+	@Test
+	public void nao_deve_alterar_os_dados_do_assinante_sem_o_endereco() throws Exception {
+		Endereco endereco = null;
+		Assinante assinante = new Assinante();
+		String mensagem = "Endereço do assinante é obrigatório";
+
+		Exception excecao = assertThrows(Exception.class,
+				() -> assinante.alterarDadosDoAssinante(nome, dataNascimento, endereco, telefoneCelular, telefoneFixo));
+
+		assertEquals(mensagem, excecao.getMessage());
+	}
+
+	@Test
+	public void nao_deve_alterar_os_dados_do_assinante_sem_os_telefones() {
+		String tefoneCelular = null;
+		String telefoneFixo = null;
+		Assinante assinante = new Assinante();
+		String mensagem = "O assinante deve possuir ao menos um telefone";
+
+		Exception excecao = assertThrows(Exception.class,
+				() -> assinante.alterarDadosDoAssinante(nome, dataNascimento, endereco, tefoneCelular, telefoneFixo));
+
+		assertEquals(mensagem, excecao.getMessage());
 	}
 
 }
